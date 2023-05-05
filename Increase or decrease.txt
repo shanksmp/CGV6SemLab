@@ -1,0 +1,42 @@
+#include <GL/glut.h>
+#include <stdio.h>
+
+float size = 1.0; // Initial size of the square
+
+void display() {
+    glClear(GL_COLOR_BUFFER_BIT);
+    glColor3f(1.0, 1.0, 1.0);
+    glRectf(-size, -size, size, size); // Draw a square centered at the origin
+    glutSwapBuffers();
+}
+
+void mouse(int button, int state, int x, int y) {
+    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+        size += 0.1; // Increase the size of the square by 0.1 units
+    }
+    else if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN) {
+        size -= 0.1; // Decrease the size of the square by 0.1 units
+    }
+    glutPostRedisplay();
+}
+
+void keyboard(unsigned char key, int x, int y) {
+    if (key == 'q' || key == 'Q') {
+        exit(0); // Quit the program
+    }
+}
+
+int main(int argc, char** argv) {
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+    glutInitWindowSize(500, 500);
+    glutCreateWindow("Resize Square");
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(-2.0, 2.0, -2.0, 2.0, -1.0, 1.0); // Set up the viewing volume
+    glutDisplayFunc(display);
+    glutMouseFunc(mouse);
+    glutKeyboardFunc(keyboard);
+    glutMainLoop();
+    return 0;
+}
