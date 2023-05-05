@@ -1,0 +1,47 @@
+#include <GL/glut.h>
+
+GLuint squareList; // display list for the square
+float size = 1.0;   // initial size of the square
+
+void init() {
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+    glEnable(GL_DEPTH_TEST);
+    squareList = glGenLists(1); // generate a new display list
+    glNewList(squareList, GL_COMPILE); // begin compiling the display list
+    glBegin(GL_QUADS);
+    glVertex2f(-size, -size); // bottom-left vertex
+    glVertex2f(-size, size);  // top-left vertex
+    glVertex2f(size, size);   // top-right vertex
+    glVertex2f(size, -size);  // bottom-right vertex
+    glEnd();
+    glEndList(); // end compiling the display list
+}
+
+void display() {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glCallList(squareList); // call the display list
+    size += 0.1;            // increase the size of the square
+    glFlush();
+    glutSwapBuffers();
+}
+
+void reshape(int w, int h) {
+    glViewport(0, 0, w, h);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(-2.0, 2.0, -2.0, 2.0, -1.0, 1.0);
+}
+
+int main(int argc, char** argv) {
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+    glutInitWindowSize(500, 500);
+    glutCreateWindow("Square with Display List");
+    init();
+    glutDisplayFunc(display);
+    glutReshapeFunc(reshape);
+    glutMainLoop();
+    return 0;
+}
