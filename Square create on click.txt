@@ -1,0 +1,49 @@
+#include <GL/glut.h>
+#include <vector>
+
+using namespace std;
+
+struct Point {
+    int x, y;
+};
+
+vector<Point> points; // vector to store the clicked points
+
+void display() {
+    glClear(GL_COLOR_BUFFER_BIT);
+    glColor3f(1.0, 1.0, 1.0); // white color for the boxes
+    for (int i = 0; i < points.size(); i++) {
+        glRecti(points[i].x-5, points[i].y-5, points[i].x+5, points[i].y+5); // draw a small box at each point
+    }
+    glFlush();
+}
+
+void mouse(int button, int state, int x, int y) {
+    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+        Point p = {x, glutGet(GLUT_WINDOW_HEIGHT) - y}; // adjust the y-coordinate to match OpenGL's convention
+        points.push_back(p); // add the clicked point to the vector
+        glutPostRedisplay(); // redraw the window to show the new box
+    }
+    else if (button == GLUT_MIDDLE_BUTTON && state == GLUT_DOWN) {
+        exit(0); // terminate the program when the middle mouse button is clicked
+    }
+}
+
+void init() {
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D(0, glutGet(GLUT_WINDOW_WIDTH), 0, glutGet(GLUT_WINDOW_HEIGHT)); // set up an orthographic projection
+}
+
+int main(int argc, char** argv) {
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+    glutInitWindowSize(500, 500);
+    glutCreateWindow("Mouse Clicks");
+    glutDisplayFunc(display);
+    glutMouseFunc(mouse);
+    init();
+    glutMainLoop();
+    return 0;
+}
